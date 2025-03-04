@@ -10,10 +10,12 @@ const getWorkHours = (empCheck) => empCheck === 1 ? PART_TIME_HOURS : empCheck =
 
 // EmployeePayroll Class
 class EmployeePayroll {
-    constructor(id, name, salary) {
+    constructor(id, name, salary, gender, startDate) {
         this.id = id;
         this.name = name;
         this.salary = salary;
+        this.gender = gender;
+        this.startDate = startDate;
         this.dailyRecords = [];
     }
 
@@ -34,14 +36,14 @@ class EmployeePayroll {
 
     // Display employee details
     displayEmployeeDetails() {
-        console.log(`\nEmployee ID: ${this.id}, Name: ${this.name}, Salary: ${this.salary}`);
+        console.log(`\nEmployee ID: ${this.id}, Name: ${this.name}, Gender: ${this.gender}, Salary: ${this.salary}, Start Date: ${this.startDate}`);
         console.table(this.dailyRecords);
         console.log(`Total Hours Worked: ${this.getTotalHours()}, Total Wage: ${this.getTotalWage()}\n`);
     }
 }
 
-// Create Employee Payroll Data
-let employee = new EmployeePayroll(101, "John Doe", 50000);
+// Create Employee Payroll Data with gender and start date
+let employee = new EmployeePayroll(101, "John Doe", 50000, "Male", "2024-03-04");
 
 let totalEmpHrs = 0, totalWorkingDays = 0;
 
