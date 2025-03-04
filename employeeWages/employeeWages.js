@@ -6,6 +6,7 @@ const PART_TIME_HOURS = 4;
 const FULL_TIME_HOURS = 8;
 const WAGE_PER_HOUR = 20;
 const NUM_OF_WORKING_DAYS = 20;
+const MAX_HOURS_IN_MONTH = 160;
 // Function to get work hours based on employee attendance and type
 function getWorkHours(empCheck) {
     switch (empCheck) {
@@ -40,3 +41,13 @@ for (let day =0; day < NUM_OF_WORKING_DAYS; day++){
 }
 let empWage = empHrs * WAGE_PER_HOUR;
 console.log("Total Working Hours: " + empHrs);
+
+let totalEmpHrs = 0;
+let totalWorkingDays = 0;
+while (totalEmpHrs <= MAX_HOURS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAYS) {
+    totalWorkingDays++;
+    let empCheck = Math.floor(Math.random() * 3);
+    totalEmpHrs += getWorkHours(empCheck);
+}
+let totalWage = totalEmpHrs * WAGE_PER_HOUR;
+console.log("Total Working Days: " + totalWorkingDays);
