@@ -1,71 +1,45 @@
 // Constants
-const IS_ABSENT = 0;
-const IS_PART_TIME = 1;
-const IS_FULL_TIME = 2;
 const PART_TIME_HOURS = 4;
 const FULL_TIME_HOURS = 8;
 const WAGE_PER_HOUR = 20;
 const NUM_OF_WORKING_DAYS = 20;
 const MAX_HOURS_IN_MONTH = 160;
 
-// Function to get work hours based on employee attendance type
-function getWorkHours(empCheck) {
-    switch (empCheck) {
-        case IS_PART_TIME:
-            return PART_TIME_HOURS;
-        case IS_FULL_TIME:
-            return FULL_TIME_HOURS;
-        default:
-            return 0;
-    }
-}
+// Function to get work hours
+const getWorkHours = (empCheck) => empCheck === 1 ? PART_TIME_HOURS : empCheck === 2 ? FULL_TIME_HOURS : 0;
 
-// Map to store day-wise wages and hours
-let dailyWagesMap = new Map();
-let dailyHoursMap = new Map();
+// Array to store daily records as objects
+let dailyRecords = [];
 
-// Main program
-let totalEmpHrs = 0;
-let totalWorkingDays = 0;
+let totalEmpHrs = 0, totalWorkingDays = 0;
 
+// Loop until max hours or max days
 while (totalEmpHrs < MAX_HOURS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAYS) {
     totalWorkingDays++;
     let empCheck = Math.floor(Math.random() * 3);
     let empHrs = getWorkHours(empCheck);
-    
     totalEmpHrs += empHrs;
-    let dailyWage = empHrs * WAGE_PER_HOUR;
-    
-    // Store day, daily wage, and daily hours in the Maps
-    dailyWagesMap.set(totalWorkingDays, dailyWage);
-    dailyHoursMap.set(totalWorkingDays, empHrs);
 
-    console.log(`Day ${totalWorkingDays}: Worked ${empHrs} hours, Earned ${dailyWage}`);
+    // Store day-wise data as an object
+    dailyRecords.push({ day: totalWorkingDays, hoursWorked: empHrs, wageEarned: empHrs * WAGE_PER_HOUR });
 }
 
-// Calculate total wage
-let totalWage = totalEmpHrs * WAGE_PER_HOUR;
-console.log("\nTotal Working Days: " + totalWorkingDays);
-console.log("Total Working Hours: " + totalEmpHrs);
-console.log("Total Employee Wage: " + totalWage);
+// Display all records
+console.log("\nDaily Records (Day, Hours Worked, Wage Earned):");
+console.table(dailyRecords);
 
-// Display stored daily wages using Map
-console.log("\nDaily Wages Record (Map):");
-for (let [day, wage] of dailyWagesMap) {
-    console.log(`Day ${day}: Wage ${wage}`);
-}
+// a. Calculate Total Wage and Total Hours Worked using reduce()
+const totalWage = dailyRecords.reduce((total, record) => total + record.wageEarned, 0);
+const totalHours = dailyRecords.reduce((total, record) => total + record.hoursWorked, 0);
 
-// a. Calculate Total Wage and Total Hours Worked using Arrow Functions
-const totalWageFromMap = Array.from(dailyWagesMap.values()).reduce((total, wage) => total + wage, 0);
-const totalHoursFromMap = Array.from(dailyHoursMap.values()).reduce((total, hours) => total + hours, 0);
+console.log("\nTotal Working Days:", totalWorkingDays);
+console.log("Total Hours Worked:", totalHours);
+console.log("Total Employee Wage:", totalWage);
 
-console.log("\nTotal Wage Calculated (using Map): " + totalWageFromMap);
-console.log("Total Hours Worked (using Map): " + totalHoursFromMap);
-
-// b. Show Full Working Days, Part Working Days, and No Working Days using Arrow Functions
-const fullWorkingDays = Array.from(dailyHoursMap).filter(([day, hours]) => hours === FULL_TIME_HOURS);
-const partWorkingDays = Array.from(dailyHoursMap).filter(([day, hours]) => hours === PART_TIME_HOURS);
-const noWorkingDays = Array.from(dailyHoursMap).filter(([day, hours]) => hours === 0);
+// b. Categorize Full Working Days, Part Working Days, and No Working Days using filter()
+const fullWorkingDays = dailyRecords.filter(record => record.hoursWorked === FULL_TIME_HOURS);
+const partWorkingDays = dailyRecords.filter(record => record.hoursWorked === PART_TIME_HOURS);
+const noWorkingDays = dailyRecords.filter(record => record.hoursWorked === 0);
 
 console.log("\nFull Working Days:");
 console.table(fullWorkingDays);
