@@ -20,8 +20,9 @@ function getWorkHours(empCheck) {
     }
 }
 
-// Map to store day-wise wages
+// Map to store day-wise wages and hours
 let dailyWagesMap = new Map();
+let dailyHoursMap = new Map();
 
 // Main program
 let totalEmpHrs = 0;
@@ -35,8 +36,9 @@ while (totalEmpHrs < MAX_HOURS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAY
     totalEmpHrs += empHrs;
     let dailyWage = empHrs * WAGE_PER_HOUR;
     
-    // Store day and daily wage in the Map
+    // Store day, daily wage, and daily hours in the Maps
     dailyWagesMap.set(totalWorkingDays, dailyWage);
+    dailyHoursMap.set(totalWorkingDays, empHrs);
 
     console.log(`Day ${totalWorkingDays}: Worked ${empHrs} hours, Earned ${dailyWage}`);
 }
@@ -53,36 +55,23 @@ for (let [day, wage] of dailyWagesMap) {
     console.log(`Day ${day}: Wage ${wage}`);
 }
 
-// Compute total wage using the Map
-let totalWageFromMap = 0;
-for (let wage of dailyWagesMap.values()) {
-    totalWageFromMap += wage;
-}
+// a. Calculate Total Wage and Total Hours Worked using Arrow Functions
+const totalWageFromMap = Array.from(dailyWagesMap.values()).reduce((total, wage) => total + wage, 0);
+const totalHoursFromMap = Array.from(dailyHoursMap.values()).reduce((total, hours) => total + hours, 0);
+
 console.log("\nTotal Wage Calculated (using Map): " + totalWageFromMap);
+console.log("Total Hours Worked (using Map): " + totalHoursFromMap);
 
-// a. Show the day along with daily wage using Map
-const dailyWageMapArray = Array.from(dailyWagesMap).map(([day, wage]) => `Day ${day}: Wage ${wage}`);
-console.log("\nDaily Wage Map:");
-console.table(dailyWageMapArray);
+// b. Show Full Working Days, Part Working Days, and No Working Days using Arrow Functions
+const fullWorkingDays = Array.from(dailyHoursMap).filter(([day, hours]) => hours === FULL_TIME_HOURS);
+const partWorkingDays = Array.from(dailyHoursMap).filter(([day, hours]) => hours === PART_TIME_HOURS);
+const noWorkingDays = Array.from(dailyHoursMap).filter(([day, hours]) => hours === 0);
 
-// b. Show days when full-time wage of 160 was earned using filter
-const fullTimeWageDays = Array.from(dailyWagesMap).filter(([day, wage]) => wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
-console.log("\nDays with Full-Time Wage (160):");
-console.table(fullTimeWageDays);
+console.log("\nFull Working Days:");
+console.table(fullWorkingDays);
 
-// c. Find the first occurrence when full-time wage was earned using find
-const firstFullTimeWageDay = Array.from(dailyWagesMap).find(([day, wage]) => wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
-console.log("\nFirst Full-Time Wage Day:");
-console.table(firstFullTimeWageDay);
+console.log("\nPart Working Days:");
+console.table(partWorkingDays);
 
-// d. Check if every element of full-time wage is truly holding full-time wage
-const isEveryFullTimeWage = Array.from(dailyWagesMap).every(([day, wage]) => wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
-console.log("\nIs every day a full-time wage day? " + isEveryFullTimeWage);
-
-// e. Check if there is any part-time wage
-const isAnyPartTimeWage = Array.from(dailyWagesMap).some(([day, wage]) => wage === PART_TIME_HOURS * WAGE_PER_HOUR);
-console.log("\nIs there any part-time wage day? " + isAnyPartTimeWage);
-
-// f. Find the number of days the employee worked
-const workedDays = Array.from(dailyWagesMap).filter(([day, wage]) => wage > 0).length;
-console.log("\nNumber of days the employee worked: " + workedDays);
+console.log("\nNo Working Days:");
+console.table(noWorkingDays);
