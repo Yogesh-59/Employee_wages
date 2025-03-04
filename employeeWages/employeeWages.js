@@ -20,8 +20,8 @@ function getWorkHours(empCheck) {
     }
 }
 
-// Array to store daily wages
-let dailyWages = [];
+// Map to store day-wise wages
+let dailyWagesMap = new Map();
 
 // Main program
 let totalEmpHrs = 0;
@@ -35,8 +35,8 @@ while (totalEmpHrs < MAX_HOURS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAY
     totalEmpHrs += empHrs;
     let dailyWage = empHrs * WAGE_PER_HOUR;
     
-    // Store daily wage
-    dailyWages.push({ day: totalWorkingDays, workHours: empHrs, wage: dailyWage });
+    // Store day and daily wage in the Map
+    dailyWagesMap.set(totalWorkingDays, dailyWage);
 
     console.log(`Day ${totalWorkingDays}: Worked ${empHrs} hours, Earned ${dailyWage}`);
 }
@@ -47,37 +47,42 @@ console.log("\nTotal Working Days: " + totalWorkingDays);
 console.log("Total Working Hours: " + totalEmpHrs);
 console.log("Total Employee Wage: " + totalWage);
 
-// Display stored daily wages
-console.log("\nDaily Wages Record:");
-console.table(dailyWages);
+// Display stored daily wages using Map
+console.log("\nDaily Wages Record (Map):");
+for (let [day, wage] of dailyWagesMap) {
+    console.log(`Day ${day}: Wage ${wage}`);
+}
 
-// a. Calculate total wage using Array reduce method
-const totalWageCalculated = dailyWages.reduce((total, daily) => total + daily.wage, 0);
-console.log("\nTotal Wage Calculated (using reduce): " + totalWageCalculated);
+// Compute total wage using the Map
+let totalWageFromMap = 0;
+for (let wage of dailyWagesMap.values()) {
+    totalWageFromMap += wage;
+}
+console.log("\nTotal Wage Calculated (using Map): " + totalWageFromMap);
 
-// b. Show the day along with daily wage using Array map
-const dailyWageMap = dailyWages.map((daily) => `Day ${daily.day}: Wage ${daily.wage}`);
+// a. Show the day along with daily wage using Map
+const dailyWageMapArray = Array.from(dailyWagesMap).map(([day, wage]) => `Day ${day}: Wage ${wage}`);
 console.log("\nDaily Wage Map:");
-console.table(dailyWageMap);
+console.table(dailyWageMapArray);
 
-// c. Show days when full-time wage of 160 was earned using filter
-const fullTimeWageDays = dailyWages.filter((daily) => daily.wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
+// b. Show days when full-time wage of 160 was earned using filter
+const fullTimeWageDays = Array.from(dailyWagesMap).filter(([day, wage]) => wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
 console.log("\nDays with Full-Time Wage (160):");
 console.table(fullTimeWageDays);
 
-// d. Find the first occurrence when full-time wage was earned using find
-const firstFullTimeWageDay = dailyWages.find((daily) => daily.wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
+// c. Find the first occurrence when full-time wage was earned using find
+const firstFullTimeWageDay = Array.from(dailyWagesMap).find(([day, wage]) => wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
 console.log("\nFirst Full-Time Wage Day:");
 console.table(firstFullTimeWageDay);
 
-// e. Check if every element of full-time wage is truly holding full-time wage
-const isEveryFullTimeWage = dailyWages.every((daily) => daily.wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
+// d. Check if every element of full-time wage is truly holding full-time wage
+const isEveryFullTimeWage = Array.from(dailyWagesMap).every(([day, wage]) => wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
 console.log("\nIs every day a full-time wage day? " + isEveryFullTimeWage);
 
-// f. Check if there is any part-time wage
-const isAnyPartTimeWage = dailyWages.some((daily) => daily.wage === PART_TIME_HOURS * WAGE_PER_HOUR);
+// e. Check if there is any part-time wage
+const isAnyPartTimeWage = Array.from(dailyWagesMap).some(([day, wage]) => wage === PART_TIME_HOURS * WAGE_PER_HOUR);
 console.log("\nIs there any part-time wage day? " + isAnyPartTimeWage);
 
-// g. Find the number of days the employee worked
-const workedDays = dailyWages.filter((daily) => daily.workHours > 0).length;
+// f. Find the number of days the employee worked
+const workedDays = Array.from(dailyWagesMap).filter(([day, wage]) => wage > 0).length;
 console.log("\nNumber of days the employee worked: " + workedDays);
