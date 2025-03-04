@@ -50,3 +50,34 @@ console.log("Total Employee Wage: " + totalWage);
 // Display stored daily wages
 console.log("\nDaily Wages Record:");
 console.table(dailyWages);
+
+// a. Calculate total wage using Array reduce method
+const totalWageCalculated = dailyWages.reduce((total, daily) => total + daily.wage, 0);
+console.log("\nTotal Wage Calculated (using reduce): " + totalWageCalculated);
+
+// b. Show the day along with daily wage using Array map
+const dailyWageMap = dailyWages.map((daily) => `Day ${daily.day}: Wage ${daily.wage}`);
+console.log("\nDaily Wage Map:");
+console.table(dailyWageMap);
+
+// c. Show days when full-time wage of 160 was earned using filter
+const fullTimeWageDays = dailyWages.filter((daily) => daily.wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
+console.log("\nDays with Full-Time Wage (160):");
+console.table(fullTimeWageDays);
+
+// d. Find the first occurrence when full-time wage was earned using find
+const firstFullTimeWageDay = dailyWages.find((daily) => daily.wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
+console.log("\nFirst Full-Time Wage Day:");
+console.table(firstFullTimeWageDay);
+
+// e. Check if every element of full-time wage is truly holding full-time wage
+const isEveryFullTimeWage = dailyWages.every((daily) => daily.wage === FULL_TIME_HOURS * WAGE_PER_HOUR);
+console.log("\nIs every day a full-time wage day? " + isEveryFullTimeWage);
+
+// f. Check if there is any part-time wage
+const isAnyPartTimeWage = dailyWages.some((daily) => daily.wage === PART_TIME_HOURS * WAGE_PER_HOUR);
+console.log("\nIs there any part-time wage day? " + isAnyPartTimeWage);
+
+// g. Find the number of days the employee worked
+const workedDays = dailyWages.filter((daily) => daily.workHours > 0).length;
+console.log("\nNumber of days the employee worked: " + workedDays);
