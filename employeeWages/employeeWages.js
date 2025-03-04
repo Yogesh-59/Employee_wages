@@ -7,7 +7,8 @@ const FULL_TIME_HOURS = 8;
 const WAGE_PER_HOUR = 20;
 const NUM_OF_WORKING_DAYS = 20;
 const MAX_HOURS_IN_MONTH = 160;
-// Function to get work hours based on employee attendance and type
+
+// Function to get work hours based on employee attendance type
 function getWorkHours(empCheck) {
     switch (empCheck) {
         case IS_PART_TIME:
@@ -19,35 +20,33 @@ function getWorkHours(empCheck) {
     }
 }
 
+// Array to store daily wages
+let dailyWages = [];
+
 // Main program
-let emp = Math.floor(Math.random() * 3); // Randomly generate 0, 1, or 2
-if (emp === IS_ABSENT) {
-    console.log("Employee is Absent");
-} else {
-    console.log("Employee is Present");
-
-    // Get work hours
-    let empHrs = getWorkHours(emp);
-
-    // Calculate wage
-    let empWage = empHrs * WAGE_PER_HOUR;
-    console.log("Employee Work Hours: " + empHrs);
-    console.log("Employee Wage: " + empWage);
-}
-let empHrs=0;
-for (let day =0; day < NUM_OF_WORKING_DAYS; day++){
-    let empCheck = Math.floor(Math.random() * 3);
-    empHrs += getWorkHours(empCheck);
-}
-let empWage = empHrs * WAGE_PER_HOUR;
-console.log("Total Working Hours: " + empHrs);
-
 let totalEmpHrs = 0;
 let totalWorkingDays = 0;
-while (totalEmpHrs <= MAX_HOURS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAYS) {
+
+while (totalEmpHrs < MAX_HOURS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAYS) {
     totalWorkingDays++;
     let empCheck = Math.floor(Math.random() * 3);
-    totalEmpHrs += getWorkHours(empCheck);
+    let empHrs = getWorkHours(empCheck);
+    
+    totalEmpHrs += empHrs;
+    let dailyWage = empHrs * WAGE_PER_HOUR;
+    
+    // Store daily wage
+    dailyWages.push({ day: totalWorkingDays, workHours: empHrs, wage: dailyWage });
+
+    console.log(`Day ${totalWorkingDays}: Worked ${empHrs} hours, Earned ${dailyWage}`);
 }
+
+// Calculate total wage
 let totalWage = totalEmpHrs * WAGE_PER_HOUR;
-console.log("Total Working Days: " + totalWorkingDays);
+console.log("\nTotal Working Days: " + totalWorkingDays);
+console.log("Total Working Hours: " + totalEmpHrs);
+console.log("Total Employee Wage: " + totalWage);
+
+// Display stored daily wages
+console.log("\nDaily Wages Record:");
+console.table(dailyWages);
