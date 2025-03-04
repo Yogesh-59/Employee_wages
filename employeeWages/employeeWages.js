@@ -8,8 +8,40 @@ const MAX_HOURS_IN_MONTH = 160;
 // Function to get work hours
 const getWorkHours = (empCheck) => empCheck === 1 ? PART_TIME_HOURS : empCheck === 2 ? FULL_TIME_HOURS : 0;
 
-// Array to store daily records as objects
-let dailyRecords = [];
+// EmployeePayroll Class
+class EmployeePayroll {
+    constructor(id, name, salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+        this.dailyRecords = [];
+    }
+
+    // Method to add daily work details
+    addWorkDetails(day, hoursWorked) {
+        let wageEarned = hoursWorked * WAGE_PER_HOUR;
+        this.dailyRecords.push({ day, hoursWorked, wageEarned });
+    }
+
+    // Method to calculate total hours and wages
+    getTotalHours() {
+        return this.dailyRecords.reduce((total, record) => total + record.hoursWorked, 0);
+    }
+
+    getTotalWage() {
+        return this.dailyRecords.reduce((total, record) => total + record.wageEarned, 0);
+    }
+
+    // Display employee details
+    displayEmployeeDetails() {
+        console.log(`\nEmployee ID: ${this.id}, Name: ${this.name}, Salary: ${this.salary}`);
+        console.table(this.dailyRecords);
+        console.log(`Total Hours Worked: ${this.getTotalHours()}, Total Wage: ${this.getTotalWage()}\n`);
+    }
+}
+
+// Create Employee Payroll Data
+let employee = new EmployeePayroll(101, "John Doe", 50000);
 
 let totalEmpHrs = 0, totalWorkingDays = 0;
 
@@ -20,32 +52,34 @@ while (totalEmpHrs < MAX_HOURS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAY
     let empHrs = getWorkHours(empCheck);
     totalEmpHrs += empHrs;
 
-    // Store day-wise data as an object
-    dailyRecords.push({ day: totalWorkingDays, hoursWorked: empHrs, wageEarned: empHrs * WAGE_PER_HOUR });
+    // Add daily work details to the employee
+    employee.addWorkDetails(totalWorkingDays, empHrs);
 }
 
-// Display all records
-console.log("\nDaily Records (Day, Hours Worked, Wage Earned):");
-console.table(dailyRecords);
+// Display Employee Payroll Data
+employee.displayEmployeeDetails();
 
-// a. Calculate Total Wage and Total Hours Worked using reduce()
-const totalWage = dailyRecords.reduce((total, record) => total + record.wageEarned, 0);
-const totalHours = dailyRecords.reduce((total, record) => total + record.hoursWorked, 0);
+// a. Calculate Total Wage and Total Hours Worked
+console.log("Total Wage using reduce():", employee.getTotalWage());
+console.log("Total Hours using reduce():", employee.getTotalHours());
 
-console.log("\nTotal Working Days:", totalWorkingDays);
-console.log("Total Hours Worked:", totalHours);
-console.log("Total Employee Wage:", totalWage);
-
-// b. Categorize Full Working Days, Part Working Days, and No Working Days using filter()
-const fullWorkingDays = dailyRecords.filter(record => record.hoursWorked === FULL_TIME_HOURS);
-const partWorkingDays = dailyRecords.filter(record => record.hoursWorked === PART_TIME_HOURS);
-const noWorkingDays = dailyRecords.filter(record => record.hoursWorked === 0);
-
+// b. Show Full Working Days using forEach()
 console.log("\nFull Working Days:");
-console.table(fullWorkingDays);
+employee.dailyRecords.forEach(record => {
+    if (record.hoursWorked === FULL_TIME_HOURS)
+        console.log(`Day ${record.day}: Hours ${record.hoursWorked}, Wage ${record.wageEarned}`);
+});
 
-console.log("\nPart Working Days:");
-console.table(partWorkingDays);
+// c. Show Part Working Days using Map() by reducing to String Array
+const partWorkingDays = employee.dailyRecords
+    .filter(record => record.hoursWorked === PART_TIME_HOURS)
+    .map(record => `Day ${record.day}`);
 
-console.log("\nNo Working Days:");
-console.table(noWorkingDays);
+console.log("\nPart Working Days:", partWorkingDays);
+
+// d. Show No Working Days using Map()
+const noWorkingDays = employee.dailyRecords
+    .filter(record => record.hoursWorked === 0)
+    .map(record => `Day ${record.day}`);
+
+console.log("\nNo Working Days:", noWorkingDays);
