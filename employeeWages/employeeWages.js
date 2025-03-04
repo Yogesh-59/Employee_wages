@@ -11,23 +11,58 @@ const getWorkHours = (empCheck) => empCheck === 1 ? PART_TIME_HOURS : empCheck =
 // EmployeePayroll Class
 class EmployeePayroll {
     constructor(id, name, salary, gender, startDate) {
-        this.id = id;
-        this.salary = salary;
-        this.gender = gender;
-        this.startDate = startDate;
         this.dailyRecords = [];
         
-        // Validate name using regex
+        // Validate properties using setter methods
+        this.setId(id);
         this.setName(name);
+        this.setSalary(salary);
+        this.setGender(gender);
+        this.setStartDate(startDate);
     }
 
-    // Name validation method
+    // Name validation (Starts with capital, at least 3 chars)
     setName(name) {
-        let namePattern = /^[A-Z][a-zA-Z]{2,}$/; // Starts with capital & at least 3 chars
+        let namePattern = /^[A-Z][a-zA-Z]{2,}$/;
         if (!namePattern.test(name)) {
-            throw new Error("Invalid Name: Name must start with a capital letter and have at least 3 characters.");
+            throw new Error(" Invalid Name: Name must start with a capital letter and have at least 3 characters.");
         }
         this.name = name;
+    }
+
+    // ID validation (Positive number greater than 0)
+    setId(id) {
+        if (!Number.isInteger(id) || id <= 0) {
+            throw new Error(" Invalid ID: Employee ID must be a non-zero positive integer.");
+        }
+        this.id = id;
+    }
+
+    // Salary validation (Positive number greater than 0)
+    setSalary(salary) {
+        if (isNaN(salary) || salary <= 0) {
+            throw new Error(" Invalid Salary: Salary must be a non-zero positive number.");
+        }
+        this.salary = salary;
+    }
+
+    // Gender validation (Only 'M' or 'F')
+    setGender(gender) {
+        let genderPattern = /^[MF]$/; // Only 'M' or 'F'
+        if (!genderPattern.test(gender)) {
+            throw new Error(" Invalid Gender: Gender must be 'M' (Male) or 'F' (Female).");
+        }
+        this.gender = gender;
+    }
+
+    // Start Date validation (Cannot be a future date)
+    setStartDate(startDate) {
+        let date = new Date(startDate);
+        let today = new Date();
+        if (isNaN(date) || date > today) {
+            throw new Error(" Invalid Start Date: Date cannot be in the future.");
+        }
+        this.startDate = startDate;
     }
 
     // Method to add daily work details
@@ -47,16 +82,16 @@ class EmployeePayroll {
 
     // Display employee details
     displayEmployeeDetails() {
-        console.log(`\nEmployee ID: ${this.id}, Name: ${this.name}, Gender: ${this.gender}, Salary: ${this.salary}, Start Date: ${this.startDate}`);
+        console.log(`\n Employee ID: ${this.id}, Name: ${this.name}, Gender: ${this.gender}, Salary: ${this.salary}, Start Date: ${this.startDate}`);
         console.table(this.dailyRecords);
         console.log(`Total Hours Worked: ${this.getTotalHours()}, Total Wage: ${this.getTotalWage()}\n`);
     }
 }
 
-// Try-Catch for name validation
+// Try-Catch for input validation
 try {
     // Create Employee Payroll Data with gender and start date
-    let employee = new EmployeePayroll(101, "Deepraj", 50000, "Male", "2024-05-25");
+    let employee = new EmployeePayroll(49, "Deepraj", 50000, "M", "2024-07-04");
 
     let totalEmpHrs = 0, totalWorkingDays = 0;
 
