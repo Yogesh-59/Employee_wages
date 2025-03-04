@@ -12,11 +12,22 @@ const getWorkHours = (empCheck) => empCheck === 1 ? PART_TIME_HOURS : empCheck =
 class EmployeePayroll {
     constructor(id, name, salary, gender, startDate) {
         this.id = id;
-        this.name = name;
         this.salary = salary;
         this.gender = gender;
         this.startDate = startDate;
         this.dailyRecords = [];
+        
+        // Validate name using regex
+        this.setName(name);
+    }
+
+    // Name validation method
+    setName(name) {
+        let namePattern = /^[A-Z][a-zA-Z]{2,}$/; // Starts with capital & at least 3 chars
+        if (!namePattern.test(name)) {
+            throw new Error("Invalid Name: Name must start with a capital letter and have at least 3 characters.");
+        }
+        this.name = name;
     }
 
     // Method to add daily work details
@@ -42,46 +53,52 @@ class EmployeePayroll {
     }
 }
 
-// Create Employee Payroll Data with gender and start date
-let employee = new EmployeePayroll(101, "John Doe", 50000, "Male", "2024-03-04");
+// Try-Catch for name validation
+try {
+    // Create Employee Payroll Data with gender and start date
+    let employee = new EmployeePayroll(101, "Deepraj", 50000, "Male", "2024-05-25");
 
-let totalEmpHrs = 0, totalWorkingDays = 0;
+    let totalEmpHrs = 0, totalWorkingDays = 0;
 
-// Loop until max hours or max days
-while (totalEmpHrs < MAX_HOURS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAYS) {
-    totalWorkingDays++;
-    let empCheck = Math.floor(Math.random() * 3);
-    let empHrs = getWorkHours(empCheck);
-    totalEmpHrs += empHrs;
+    // Loop until max hours or max days
+    while (totalEmpHrs < MAX_HOURS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAYS) {
+        totalWorkingDays++;
+        let empCheck = Math.floor(Math.random() * 3);
+        let empHrs = getWorkHours(empCheck);
+        totalEmpHrs += empHrs;
 
-    // Add daily work details to the employee
-    employee.addWorkDetails(totalWorkingDays, empHrs);
+        // Add daily work details to the employee
+        employee.addWorkDetails(totalWorkingDays, empHrs);
+    }
+
+    // Display Employee Payroll Data
+    employee.displayEmployeeDetails();
+
+    // a. Calculate Total Wage and Total Hours Worked
+    console.log("Total Wage using reduce():", employee.getTotalWage());
+    console.log("Total Hours using reduce():", employee.getTotalHours());
+
+    // b. Show Full Working Days using forEach()
+    console.log("\nFull Working Days:");
+    employee.dailyRecords.forEach(record => {
+        if (record.hoursWorked === FULL_TIME_HOURS)
+            console.log(`Day ${record.day}: Hours ${record.hoursWorked}, Wage ${record.wageEarned}`);
+    });
+
+    // c. Show Part Working Days using Map() by reducing to String Array
+    const partWorkingDays = employee.dailyRecords
+        .filter(record => record.hoursWorked === PART_TIME_HOURS)
+        .map(record => `Day ${record.day}`);
+
+    console.log("\nPart Working Days:", partWorkingDays);
+
+    // d. Show No Working Days using Map()
+    const noWorkingDays = employee.dailyRecords
+        .filter(record => record.hoursWorked === 0)
+        .map(record => `Day ${record.day}`);
+
+    console.log("\nNo Working Days:", noWorkingDays);
+
+} catch (error) {
+    console.error("\n Error:", error.message);
 }
-
-// Display Employee Payroll Data
-employee.displayEmployeeDetails();
-
-// a. Calculate Total Wage and Total Hours Worked
-console.log("Total Wage using reduce():", employee.getTotalWage());
-console.log("Total Hours using reduce():", employee.getTotalHours());
-
-// b. Show Full Working Days using forEach()
-console.log("\nFull Working Days:");
-employee.dailyRecords.forEach(record => {
-    if (record.hoursWorked === FULL_TIME_HOURS)
-        console.log(`Day ${record.day}: Hours ${record.hoursWorked}, Wage ${record.wageEarned}`);
-});
-
-// c. Show Part Working Days using Map() by reducing to String Array
-const partWorkingDays = employee.dailyRecords
-    .filter(record => record.hoursWorked === PART_TIME_HOURS)
-    .map(record => `Day ${record.day}`);
-
-console.log("\nPart Working Days:", partWorkingDays);
-
-// d. Show No Working Days using Map()
-const noWorkingDays = employee.dailyRecords
-    .filter(record => record.hoursWorked === 0)
-    .map(record => `Day ${record.day}`);
-
-console.log("\nNo Working Days:", noWorkingDays);
